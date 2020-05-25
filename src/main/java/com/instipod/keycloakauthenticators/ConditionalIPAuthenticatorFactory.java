@@ -9,11 +9,9 @@ import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.provider.ProviderConfigurationBuilder;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-public class ConditionalIPAuthenticatorFactory implements org.keycloak.authentication.authenticators.conditional.ConditionalAuthenticatorFactory, org.keycloak.provider.ServerInfoAwareProviderFactory {
+public class ConditionalIPAuthenticatorFactory implements org.keycloak.authentication.authenticators.conditional.ConditionalAuthenticatorFactory {
     public static final String PROVIDER_ID = "conditional-ip-filter";
     protected static final String CONDITIONAL_IP_FILTER = "condIpFilter";
 
@@ -88,12 +86,5 @@ public class ConditionalIPAuthenticatorFactory implements org.keycloak.authentic
     @Override
     public ConditionalAuthenticator getSingleton() {
         return ConditionalIPAuthenticator.SINGLETON;
-    }
-
-    @Override
-    public Map<String, String> getOperationalInfo() {
-        Map<String, String> ret = new LinkedHashMap<>();
-        ret.put("ip-authenticator-installed", "yes");
-        return ret;
     }
 }
