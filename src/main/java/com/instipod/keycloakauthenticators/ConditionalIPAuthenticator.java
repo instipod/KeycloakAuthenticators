@@ -15,9 +15,26 @@ public class ConditionalIPAuthenticator implements org.keycloak.authentication.a
         AuthenticatorConfigModel authConfig = context.getAuthenticatorConfig();
         if (authConfig!=null && authConfig.getConfig()!=null) {
             //evaluate
+            String not = authConfig.getConfig().get(ConditionalIPAuthenticatorFactory.CONDITIONAL_NOT);
             String ipCIDR = authConfig.getConfig().get(ConditionalIPAuthenticatorFactory.CONDITIONAL_IP_FILTER);
-            IPAddressMatcher matcher = new IPAddressMatcher(ipCIDR);
-            return (matcher.matches(context.getConnection().getRemoteAddr()));
+            String[] cidrs = ipCIDR.split(",");
+            boolean inRange = inRange(cidrs, context.getConnection().getRemoteAddr());
+
+            if (not.equalsIgnoreCase("true")) {
+                return (!inRange);
+            } else {
+                return inRange;
+            }
+        }
+        return false;
+    }
+
+    public boolean inRange(String[] ranges, String ip) {
+        for (String cidr : ranges) {
+            IPAddressMatcher matcher = new IPAddressMatcher(cidr);
+            if (matcher.matches(ip)) {
+                return true;
+            }
         }
         return false;
     }

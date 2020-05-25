@@ -14,12 +14,14 @@ import java.util.List;
 public class ConditionalIPAuthenticatorFactory implements org.keycloak.authentication.authenticators.conditional.ConditionalAuthenticatorFactory {
     public static final String PROVIDER_ID = "conditional-ip-filter";
     protected static final String CONDITIONAL_IP_FILTER = "condIpFilter";
+    protected static final String CONDITIONAL_NOT = "condIpNot";
 
     private static List<ProviderConfigProperty> commonConfig;
 
     static {
         commonConfig = Collections.unmodifiableList(ProviderConfigurationBuilder.create()
-                .property().name(CONDITIONAL_IP_FILTER).label("IP Filter").helpText("CIDR-Formatted IP Range to Filter").type(ProviderConfigProperty.STRING_TYPE).add()
+                .property().name(CONDITIONAL_IP_FILTER).label("IP Ranges").helpText("CIDR Format IP ranges to Filter, comma-separated").type(ProviderConfigProperty.STRING_TYPE).add()
+                .property().name(CONDITIONAL_NOT).label("Not").helpText("If the filter should match IPs NOT in range").type(ProviderConfigProperty.BOOLEAN_TYPE).add()
                 .build()
         );
     }
