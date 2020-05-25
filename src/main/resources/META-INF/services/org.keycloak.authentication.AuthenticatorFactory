@@ -1,0 +1,2 @@
+com.instipod.keycloakauthenticators.ConditionalIPAuthenticatorFactory
+com.instipod.keycloakauthenticators.ConditionalUserAgentAuthenticatorFactory
