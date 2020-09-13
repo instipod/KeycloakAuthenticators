@@ -1,6 +1,6 @@
 package com.instipod.keycloakauthenticators;
 
-import com.instipod.keycloakauthenticators.utils.ValueUtils;
+import com.instipod.keycloakauthenticators.utils.AuthenticatorUtils;
 import in.ashwanthkumar.slack.webhook.Slack;
 import in.ashwanthkumar.slack.webhook.SlackMessage;
 import org.keycloak.authentication.AuthenticationFlowContext;
@@ -26,7 +26,7 @@ public class SlackMessageAuthenticator implements org.keycloak.authentication.Au
             String isCritical = authConfig.getConfig().get(SlackMessageAuthenticatorFactory.SLACK_IS_CRITICAL);
             String webhook = authConfig.getConfig().get(SlackMessageAuthenticatorFactory.SLACK_WEBHOOK_URL);
 
-            message = ValueUtils.variableReplace(authenticationFlowContext, message);
+            message = AuthenticatorUtils.variableReplace(authenticationFlowContext, message);
 
             SlackMessage slackMessage = new SlackMessage(message);
 

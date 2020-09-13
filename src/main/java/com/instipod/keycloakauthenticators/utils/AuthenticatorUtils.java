@@ -1,9 +1,12 @@
 package com.instipod.keycloakauthenticators.utils;
 
 import org.keycloak.authentication.AuthenticationFlowContext;
+import org.keycloak.models.RoleModel;
 import org.keycloak.models.UserModel;
 
-public class ValueUtils {
+import java.util.Set;
+
+public class AuthenticatorUtils {
     public static String variableReplace(AuthenticationFlowContext context, String message) {
         UserModel user = null;
         try {
@@ -33,5 +36,17 @@ public class ValueUtils {
         } catch (Exception ex) { }
 
         return message;
+    }
+
+    public static boolean hasRole(UserModel user, String roleName) {
+        Set<RoleModel> roles = user.getRoleMappings();
+
+        for (RoleModel role : roles) {
+            if (role.getName().equalsIgnoreCase(roleName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

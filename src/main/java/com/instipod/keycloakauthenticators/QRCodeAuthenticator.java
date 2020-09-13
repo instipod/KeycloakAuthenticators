@@ -64,6 +64,8 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
 
         String attributeName = authConfig.getConfig().get(QRCodeAuthenticatorFactory.QR_KEY_ATTRIBUTE);
         String qrCodeData = formData.getFirst("qrCodeData");
+        //remove all nonalphanumeric characters from data
+        qrCodeData = qrCodeData.replaceAll("[^a-zA-Z0-9]", "");
 
         if (attributeName.length() == 0) {
             logger.error("No attribute name to search was specified in QR Code Authenticator!");

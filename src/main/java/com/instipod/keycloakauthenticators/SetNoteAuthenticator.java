@@ -1,6 +1,6 @@
 package com.instipod.keycloakauthenticators;
 
-import com.instipod.keycloakauthenticators.utils.ValueUtils;
+import com.instipod.keycloakauthenticators.utils.AuthenticatorUtils;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.models.AuthenticatorConfigModel;
@@ -20,7 +20,7 @@ public class SetNoteAuthenticator implements org.keycloak.authentication.Authent
             String noteName = authConfig.getConfig().get(SetNoteAuthenticatorFactory.NOTE_NAME);
             String noteValue = authConfig.getConfig().get(SetNoteAuthenticatorFactory.NOTE_VALUE);
 
-            noteValue = ValueUtils.variableReplace(authenticationFlowContext, noteValue);
+            noteValue = AuthenticatorUtils.variableReplace(authenticationFlowContext, noteValue);
 
             authenticationFlowContext.getAuthenticationSession().setAuthNote(noteName, noteValue);
             authenticationFlowContext.success();
