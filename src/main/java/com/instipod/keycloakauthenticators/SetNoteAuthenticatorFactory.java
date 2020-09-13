@@ -11,22 +11,23 @@ import org.keycloak.provider.ProviderConfigurationBuilder;
 import java.util.Collections;
 import java.util.List;
 
-public class DenyLoginAuthenticatorFactory implements org.keycloak.authentication.AuthenticatorFactory {
-    public static final String PROVIDER_ID = "deny-login";
-    protected static final String DENIAL_MESSAGE = "denialMessage";
-    protected static final String DENIAL_FILE = "login-denied.ftl";
+public class SetNoteAuthenticatorFactory implements org.keycloak.authentication.AuthenticatorFactory {
+    public static final String PROVIDER_ID = "set-note";
+    protected static final String NOTE_NAME = "setNoteName";
+    protected static final String NOTE_VALUE = "setNoteValue";
     private static List<ProviderConfigProperty> commonConfig;
 
     static {
         commonConfig = Collections.unmodifiableList(ProviderConfigurationBuilder.create()
-                .property().name(DENIAL_MESSAGE).label("Denial Message").helpText("Message to show as an error").type(ProviderConfigProperty.STRING_TYPE).add()
+                .property().name(NOTE_NAME).label("Note Name").helpText("Name of the note to set").type(ProviderConfigProperty.STRING_TYPE).add()
+                .property().name(NOTE_VALUE).label("Note Value").helpText("Value of the note to set (variables are supported)").type(ProviderConfigProperty.STRING_TYPE).add()
                 .build()
         );
     }
 
     @Override
     public String getDisplayType() {
-        return "Deny Login";
+        return "Set Auth Note";
     }
 
     @Override
@@ -55,7 +56,7 @@ public class DenyLoginAuthenticatorFactory implements org.keycloak.authenticatio
 
     @Override
     public String getHelpText() {
-        return "Shows a predefined denial message to user, never returns success";
+        return "Sets a predefined value for an authentication note";
     }
 
     @Override
@@ -65,7 +66,7 @@ public class DenyLoginAuthenticatorFactory implements org.keycloak.authenticatio
 
     @Override
     public Authenticator create(KeycloakSession keycloakSession) {
-        return DenyLoginAuthenticator.SINGLETON;
+        return SetNoteAuthenticator.SINGLETON;
     }
 
     @Override

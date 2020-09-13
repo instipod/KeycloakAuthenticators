@@ -39,7 +39,7 @@ public class DenyLoginAuthenticator implements org.keycloak.authentication.Authe
     public void showDenial(AuthenticationFlowContext context, String message) {
         LoginFormsProvider form = context.form();
         form.setError(message);
-        Response response = form.createForm("login-denied");
+        Response response = form.createForm(DenyLoginAuthenticatorFactory.DENIAL_FILE);
         context.failure(AuthenticationFlowError.INVALID_CREDENTIALS, response);
     }
 

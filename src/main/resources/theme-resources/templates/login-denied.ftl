@@ -13,8 +13,6 @@
 
                 <div id="kc-form-buttons" class="${properties.kcFormButtonsClass!}">
                     <div class="${properties.kcFormButtonsWrapperClass!}">
-                        <input class="${properties.kcButtonClass!} ${properties.kcButtonDefaultClass!} ${properties.kcButtonLargeClass!}"
-                               name="cancel" id="kc-cancel" type="submit" value="${msg("doCancel")}"/>-->
                     </div>
                 </div>
             </div>

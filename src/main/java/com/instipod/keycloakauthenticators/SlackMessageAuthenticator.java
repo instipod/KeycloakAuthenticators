@@ -1,5 +1,6 @@
 package com.instipod.keycloakauthenticators;
 
+import com.instipod.keycloakauthenticators.utils.ValueUtils;
 import in.ashwanthkumar.slack.webhook.Slack;
 import in.ashwanthkumar.slack.webhook.SlackMessage;
 import org.keycloak.authentication.AuthenticationFlowContext;
@@ -25,27 +26,7 @@ public class SlackMessageAuthenticator implements org.keycloak.authentication.Au
             String isCritical = authConfig.getConfig().get(SlackMessageAuthenticatorFactory.SLACK_IS_CRITICAL);
             String webhook = authConfig.getConfig().get(SlackMessageAuthenticatorFactory.SLACK_WEBHOOK_URL);
 
-            try {
-                message = message.replace("%username%", user.getUsername());
-            } catch (Exception ex) { }
-            try {
-                message = message.replace("%email%", user.getEmail());
-            } catch (Exception ex) { }
-            try {
-                message = message.replace("%firstname%", user.getFirstName());
-            } catch (Exception ex) { }
-            try {
-                message = message.replace("%lastname%", user.getLastName());
-            } catch (Exception ex) { }
-            try {
-                message = message.replace("%ipaddress%", authenticationFlowContext.getConnection().getRemoteAddr());
-            } catch (Exception ex) { }
-            try {
-                message = message.replace("%clientname%", authenticationFlowContext.getAuthenticationSession().getClient().getName());
-            } catch (Exception ex) { }
-            try {
-                message = message.replace("%clientdesc%", authenticationFlowContext.getAuthenticationSession().getClient().getDescription());
-            } catch (Exception ex) { }
+            message = ValueUtils.variableReplace(authenticationFlowContext, message);
 
             SlackMessage slackMessage = new SlackMessage(message);
 
