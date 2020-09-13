@@ -4,6 +4,7 @@ import com.instipod.keycloakauthenticators.ConditionalNoteAuthenticatorFactory;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.models.AuthenticatorConfigModel;
+import org.keycloak.models.GroupModel;
 import org.keycloak.models.RoleModel;
 import org.keycloak.models.UserModel;
 
@@ -21,6 +22,9 @@ public class AuthenticatorUtils {
         } catch (Exception ex) { }
 
         try {
+            message = message.replace("%userid%", user.getId());
+        } catch (Exception ex) { }
+        try {
             message = message.replace("%username%", user.getUsername());
         } catch (Exception ex) { }
         try {
@@ -36,6 +40,9 @@ public class AuthenticatorUtils {
             message = message.replace("%ipaddress%", context.getConnection().getRemoteAddr());
         } catch (Exception ex) { }
         try {
+            message = message.replace("%clientid%", context.getAuthenticationSession().getClient().getId());
+        } catch (Exception ex) { }
+        try {
             message = message.replace("%clientname%", context.getAuthenticationSession().getClient().getName());
         } catch (Exception ex) { }
         try {
@@ -48,20 +55,24 @@ public class AuthenticatorUtils {
         return message;
     }
 
-    public static boolean hasRole(UserModel user, String roleName) {
-        Set<RoleModel> roles = user.getRoleMappings();
+    public static boolean hasRole(AuthenticationFlowContext context, String roleId) {
+        RoleModel role = context.getRealm().getRoleById(roleId);
 
-        for (RoleModel role : roles) {
-            if (role.getName().equalsIgnoreCase(roleName)) {
-                return true;
-            }
+        if (role == null) {
+            Logger.getLogger(AuthenticatorUtils.class).warn("Could not find role by id " + roleId);
+            return false;
         }
 
-        return false;
+        if (context.getUser() == null) {
+            return false;
+        }
+
+        return (context.getUser().hasRole(role));
     }
 
     public static boolean getConfigBoolean(AuthenticationFlowContext context, String configName) {
         AuthenticatorConfigModel authConfig = context.getAuthenticatorConfig();
+
         if (authConfig!=null && authConfig.getConfig()!=null) {
             String booleanValue = authConfig.getConfig().get(configName);
 

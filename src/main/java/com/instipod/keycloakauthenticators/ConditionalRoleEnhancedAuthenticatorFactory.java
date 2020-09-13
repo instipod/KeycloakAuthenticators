@@ -20,7 +20,7 @@ public class ConditionalRoleEnhancedAuthenticatorFactory implements org.keycloak
 
     static {
         commonConfig = Collections.unmodifiableList(ProviderConfigurationBuilder.create()
-                .property().name(CONDITIONAL_ROLE).label("Role").helpText("Role to check for (supports variables)").type(ProviderConfigProperty.STRING_TYPE).add()
+                .property().name(CONDITIONAL_ROLE).label("Role Id").helpText("Role Id to check for (supports variables)").type(ProviderConfigProperty.STRING_TYPE).add()
                 .property().name(CONDITIONAL_NOT).label("Not").helpText("If we should match on NOT having this role").type(ProviderConfigProperty.BOOLEAN_TYPE).add()
                 .build()
         );

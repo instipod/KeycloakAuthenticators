@@ -28,10 +28,10 @@ public class ConditionalRoleEnhancedAuthenticator implements org.keycloak.authen
             boolean check;
             if (not) {
                 //does not have role
-                check = !(AuthenticatorUtils.hasRole(context.getUser(), role));
+                check = !(AuthenticatorUtils.hasRole(context, role));
             } else {
                 //has role
-                check = (AuthenticatorUtils.hasRole(context.getUser(), role));
+                check = (AuthenticatorUtils.hasRole(context, role));
             }
 
             if (AuthenticatorUtils.debuggingBuild)
