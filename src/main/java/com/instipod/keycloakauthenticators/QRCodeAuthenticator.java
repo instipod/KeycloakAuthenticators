@@ -19,7 +19,22 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
 
     @Override
     public void authenticate(AuthenticationFlowContext authenticationFlowContext) {
+        AuthenticatorConfigModel authConfig = authenticationFlowContext.getAuthenticatorConfig();
         logger.debug("Starting a new QR Code authenticator session");
+
+        if (authConfig!=null && authConfig.getConfig()!=null) {
+            //make sure the authenticator is configured
+            String attributeName = authConfig.getConfig().get(QRCodeAuthenticatorFactory.QR_KEY_ATTRIBUTE);
+            if (attributeName.length() == 0) {
+                logger.error("No attribute name to search was specified in QR Code Authenticator!");
+                authenticationFlowContext.failure(AuthenticationFlowError.INTERNAL_ERROR);
+                return;
+            }
+        } else {
+            logger.error("No configuration was specified in QR Code Authenticator!");
+            authenticationFlowContext.failure(AuthenticationFlowError.INTERNAL_ERROR);
+            return;
+        }
 
         Response challenge = generateForm(authenticationFlowContext).createForm(QRCodeAuthenticatorFactory.QR_SCANNER_FILE);
         authenticationFlowContext.challenge(challenge);
@@ -36,7 +51,14 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
         MultivaluedMap<String, String> formData = authenticationFlowContext.getHttpRequest().getDecodedFormParameters();
 
         if (formData.containsKey("cancel")) {
-            authenticationFlowContext.failure(AuthenticationFlowError.INVALID_USER);
+            authenticationFlowContext.failure(AuthenticationFlowError.INVALID_CREDENTIALS);
+            return;
+        }
+
+        if (authConfig==null || authConfig.getConfig()==null) {
+            //configuration does not exist
+            logger.error("No configuration was specified in QR Code Authenticator!");
+            authenticationFlowContext.failure(AuthenticationFlowError.INTERNAL_ERROR);
             return;
         }
 
@@ -46,6 +68,7 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
         if (attributeName.length() == 0) {
             logger.error("No attribute name to search was specified in QR Code Authenticator!");
             authenticationFlowContext.failure(AuthenticationFlowError.INTERNAL_ERROR);
+            return;
         }
 
         logger.debug("QR Code value submitted, looking in " + attributeName + " for value " + qrCodeData);
