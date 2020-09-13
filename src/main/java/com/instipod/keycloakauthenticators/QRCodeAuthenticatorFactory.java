@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class QRCodeAuthenticatorFactory implements org.keycloak.authentication.AuthenticatorFactory {
-    public static final String PROVIDER_ID = "conditional-ip-filter";
+    public static final String PROVIDER_ID = "qr-code";
     protected static final String QR_KEY_ATTRIBUTE = "qrKeyAttribute";
     protected static final String QR_SCANNER_FILE = "qrCode.ftl";
     private static List<ProviderConfigProperty> commonConfig;
@@ -26,12 +26,12 @@ public class QRCodeAuthenticatorFactory implements org.keycloak.authentication.A
 
     @Override
     public String getDisplayType() {
-        return "QR Code Authenticator";
+        return "QR Code";
     }
 
     @Override
     public String getReferenceCategory() {
-        return null;
+        return "password";
     }
 
     @Override
@@ -60,31 +60,31 @@ public class QRCodeAuthenticatorFactory implements org.keycloak.authentication.A
 
     @Override
     public List<ProviderConfigProperty> getConfigProperties() {
-        return null;
+        return commonConfig;
     }
 
     @Override
     public Authenticator create(KeycloakSession keycloakSession) {
-        return null;
+        return QRCodeAuthenticator.SINGLETON;
     }
 
     @Override
     public void init(Config.Scope scope) {
-
+        //noop
     }
 
     @Override
     public void postInit(KeycloakSessionFactory keycloakSessionFactory) {
-
+        //noop
     }
 
     @Override
     public void close() {
-
+        //noop
     }
 
     @Override
     public String getId() {
-        return null;
+        return PROVIDER_ID;
     }
 }
