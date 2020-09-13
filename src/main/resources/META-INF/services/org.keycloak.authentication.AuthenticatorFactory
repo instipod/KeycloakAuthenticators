@@ -1,2 +1,3 @@
 com.instipod.keycloakauthenticators.ConditionalIPAuthenticatorFactory
 com.instipod.keycloakauthenticators.ConditionalUserAgentAuthenticatorFactory
+com.instipod.keycloakauthenticators.SlackMessageAuthenticatorFactory
