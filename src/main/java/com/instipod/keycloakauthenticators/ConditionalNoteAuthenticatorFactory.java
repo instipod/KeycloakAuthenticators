@@ -15,13 +15,15 @@ public class ConditionalNoteAuthenticatorFactory implements org.keycloak.authent
     public static final String PROVIDER_ID = "conditional-note";
     protected static final String CONDITIONAL_NOTE_NAME = "condNoteName";
     protected static final String CONDITIONAL_NOTE_VALUE = "condNoteValue";
+    protected static final String CONDITIONAL_NOTE_NOT = "condNoteNot";
 
     private static List<ProviderConfigProperty> commonConfig;
 
     static {
         commonConfig = Collections.unmodifiableList(ProviderConfigurationBuilder.create()
                 .property().name(CONDITIONAL_NOTE_NAME).label("Auth Note Name").helpText("Name of the auth note to check").type(ProviderConfigProperty.STRING_TYPE).add()
-                .property().name(CONDITIONAL_NOTE_VALUE).label("Auth Note Value").helpText("Value that the auth note should have").type(ProviderConfigProperty.BOOLEAN_TYPE).add()
+                .property().name(CONDITIONAL_NOTE_VALUE).label("Auth Note Value").helpText("Value that the auth note should have").type(ProviderConfigProperty.STRING_TYPE).add()
+                .property().name(CONDITIONAL_NOTE_NOT).label("Auth Note Inverted (Not)").helpText("If selected, inverts the check").type(ProviderConfigProperty.BOOLEAN_TYPE).add()
                 .build()
         );
     }

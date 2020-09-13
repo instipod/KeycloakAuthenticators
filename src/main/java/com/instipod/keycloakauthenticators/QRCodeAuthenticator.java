@@ -83,6 +83,7 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
 
             authenticationFlowContext.clearUser();
             authenticationFlowContext.setUser(user);
+            authenticationFlowContext.getAuthenticationSession().setAuthNote("qr-code-authenticated", "true");
             authenticationFlowContext.success();
         } else {
             //qr is invalid, either returned zero or multiple users
