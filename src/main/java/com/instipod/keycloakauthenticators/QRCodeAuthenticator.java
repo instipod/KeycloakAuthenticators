@@ -67,7 +67,7 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
             logger.warn("Invalid QR Code data was provided.  Data was " + qrCodeData);
 
             LoginFormsProvider form = generateForm(authenticationFlowContext);
-            form.setError("");
+            form.setError("The QR code that was scanned is not valid.");
             Response challenge = form.createForm(QRCodeAuthenticatorFactory.QR_SCANNER_FILE);
             authenticationFlowContext.failureChallenge(AuthenticationFlowError.INVALID_CREDENTIALS, challenge);
         }
