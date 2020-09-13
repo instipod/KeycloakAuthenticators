@@ -10,7 +10,7 @@ import org.keycloak.models.UserModel;
 import java.util.Set;
 
 public class AuthenticatorUtils {
-    public static final boolean debuggingBuild = true;
+    public static final boolean debuggingBuild = false;
 
     public static String variableReplace(AuthenticationFlowContext context, String message) {
         String original = message;
