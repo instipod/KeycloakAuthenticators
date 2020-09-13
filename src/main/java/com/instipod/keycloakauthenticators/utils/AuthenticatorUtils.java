@@ -1,5 +1,6 @@
 package com.instipod.keycloakauthenticators.utils;
 
+import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.models.RoleModel;
 import org.keycloak.models.UserModel;
@@ -7,7 +8,11 @@ import org.keycloak.models.UserModel;
 import java.util.Set;
 
 public class AuthenticatorUtils {
+    public static final boolean debuggingBuild = true;
+
     public static String variableReplace(AuthenticationFlowContext context, String message) {
+        String original = message;
+
         UserModel user = null;
         try {
             user = context.getUser();
@@ -34,6 +39,9 @@ public class AuthenticatorUtils {
         try {
             message = message.replace("%clientdesc%", context.getAuthenticationSession().getClient().getDescription());
         } catch (Exception ex) { }
+
+        if (debuggingBuild)
+            Logger.getLogger(AuthenticatorUtils.class).info("Variable Replace: Original " + original + " replaced with " + message);
 
         return message;
     }

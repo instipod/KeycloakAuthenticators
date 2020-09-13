@@ -1,5 +1,6 @@
 package com.instipod.keycloakauthenticators;
 
+import com.instipod.keycloakauthenticators.utils.AuthenticatorUtils;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
@@ -14,9 +15,13 @@ import javax.ws.rs.core.Response;
 
 public class ChoiceAuthenticator implements org.keycloak.authentication.Authenticator {
     public static final ChoiceAuthenticator SINGLETON = new ChoiceAuthenticator();
+    private static Logger logger = Logger.getLogger(ChoiceAuthenticator.class);
 
     @Override
     public void authenticate(AuthenticationFlowContext authenticationFlowContext) {
+        if (AuthenticatorUtils.debuggingBuild)
+            logger.info("Now showing choice authenticator selection screen");
+
         LoginFormsProvider form = authenticationFlowContext.form();
         Response response = form.createForm(ChoiceAuthenticatorFactory.CHOICE_FILE);
         authenticationFlowContext.challenge(response);
@@ -28,6 +33,7 @@ public class ChoiceAuthenticator implements org.keycloak.authentication.Authenti
         MultivaluedMap<String, String> formData = authenticationFlowContext.getHttpRequest().getDecodedFormParameters();
 
         if (authConfig==null || authConfig.getConfig()==null) {
+            logger.error("No configuration data was found for authenticator!");
             authenticationFlowContext.failure(AuthenticationFlowError.INTERNAL_ERROR);
             return;
         }
@@ -35,12 +41,14 @@ public class ChoiceAuthenticator implements org.keycloak.authentication.Authenti
         String noteName = authConfig.getConfig().get(ChoiceAuthenticatorFactory.NOTE_NAME);
 
         if (noteName.length() == 0) {
+            logger.error("No note name was found for authenticator!");
             authenticationFlowContext.failure(AuthenticationFlowError.INTERNAL_ERROR);
             return;
         }
 
         if (!formData.containsKey("choice")) {
             //no choice returned
+            logger.warn("No choice field was found in the returned form data!");
             LoginFormsProvider form = authenticationFlowContext.form();
             form.setError("You must make a selection to continue.");
             Response response = form.createForm(ChoiceAuthenticatorFactory.CHOICE_FILE);
@@ -50,6 +58,9 @@ public class ChoiceAuthenticator implements org.keycloak.authentication.Authenti
             String choice = formData.getFirst("choice");
             //remove any nonalphanumeric characters
             choice = choice.replaceAll("[^a-zA-Z0-9]", "");
+
+            if (AuthenticatorUtils.debuggingBuild)
+                logger.info("Choice selected:  setting " + noteName + " to value " + choice);
 
             authenticationFlowContext.getAuthenticationSession().setAuthNote(noteName, choice);
             authenticationFlowContext.success();

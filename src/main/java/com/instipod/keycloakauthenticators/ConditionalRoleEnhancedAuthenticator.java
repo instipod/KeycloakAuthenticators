@@ -1,7 +1,7 @@
 package com.instipod.keycloakauthenticators;
 
-import com.instipod.keycloakauthenticators.utils.IPAddressMatcher;
 import com.instipod.keycloakauthenticators.utils.AuthenticatorUtils;
+import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.AuthenticatorConfigModel;
@@ -10,6 +10,7 @@ import org.keycloak.models.RealmModel;
 
 public class ConditionalRoleEnhancedAuthenticator implements org.keycloak.authentication.authenticators.conditional.ConditionalAuthenticator {
     public static final ConditionalRoleEnhancedAuthenticator SINGLETON = new ConditionalRoleEnhancedAuthenticator();
+    private static Logger logger = Logger.getLogger(ConditionalRoleEnhancedAuthenticator.class);
 
     @Override
     public boolean matchCondition(AuthenticationFlowContext context) {
@@ -21,13 +22,24 @@ public class ConditionalRoleEnhancedAuthenticator implements org.keycloak.authen
             String role = authConfig.getConfig().get(ConditionalRoleEnhancedAuthenticatorFactory.CONDITIONAL_ROLE);
             role = AuthenticatorUtils.variableReplace(context, role);
 
+            if (AuthenticatorUtils.debuggingBuild)
+                logger.info("ConditionalRoleEhncd: Checking " + context.getUser().getUsername() + " for role " + role);
+
+            boolean check;
             if (not.equalsIgnoreCase("true")) {
                 //does not have role
-                return !(AuthenticatorUtils.hasRole(context.getUser(), role));
+                check = !(AuthenticatorUtils.hasRole(context.getUser(), role));
             } else {
                 //has role
-                return (AuthenticatorUtils.hasRole(context.getUser(), role));
+                check = (AuthenticatorUtils.hasRole(context.getUser(), role));
             }
+
+            if (AuthenticatorUtils.debuggingBuild)
+                logger.info("ConditionalRoleEhncd: Result of check: " + check);
+
+            return check;
+        } else {
+            logger.error("No config data found for this authenticator!");
         }
 
         return false;

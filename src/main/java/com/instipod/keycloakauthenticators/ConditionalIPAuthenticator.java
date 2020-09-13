@@ -1,6 +1,8 @@
 package com.instipod.keycloakauthenticators;
 
+import com.instipod.keycloakauthenticators.utils.AuthenticatorUtils;
 import com.instipod.keycloakauthenticators.utils.IPAddressMatcher;
+import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.AuthenticatorConfigModel;
@@ -9,6 +11,7 @@ import org.keycloak.models.RealmModel;
 
 public class ConditionalIPAuthenticator implements org.keycloak.authentication.authenticators.conditional.ConditionalAuthenticator {
     public static final ConditionalIPAuthenticator SINGLETON = new ConditionalIPAuthenticator();
+    private static Logger logger = Logger.getLogger(ConditionalIPAuthenticator.class);
 
     @Override
     public boolean matchCondition(AuthenticationFlowContext context) {
@@ -20,12 +23,21 @@ public class ConditionalIPAuthenticator implements org.keycloak.authentication.a
             String[] cidrs = ipCIDR.split(",");
             boolean inRange = inRange(cidrs, context.getConnection().getRemoteAddr());
 
+            if (AuthenticatorUtils.debuggingBuild)
+                logger.info("Conditional IP Authenticator result: " + context.getConnection().getRemoteAddr() + " is " + inRange);
+
             if (not.equalsIgnoreCase("true")) {
                 return (!inRange);
             } else {
                 return inRange;
             }
+        } else {
+            logger.error("No configuration data was found for the authenticator!");
         }
+
+        if (AuthenticatorUtils.debuggingBuild)
+            logger.info("Conditional IP Authenticator returning false");
+
         return false;
     }
 

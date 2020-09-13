@@ -1,5 +1,6 @@
 package com.instipod.keycloakauthenticators;
 
+import com.instipod.keycloakauthenticators.utils.AuthenticatorUtils;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlow;
 import org.keycloak.authentication.AuthenticationFlowContext;
@@ -27,16 +28,21 @@ public class DenyLoginAuthenticator implements org.keycloak.authentication.Authe
             String errorMessage = authConfig.getConfig().get(DenyLoginAuthenticatorFactory.DENIAL_MESSAGE);
 
             if (errorMessage.length() == 0) {
+                logger.error("Denial message is not configured!");
                 showDenial(authenticationFlowContext, "Authentication flow is not configured!");
             } else {
                 showDenial(authenticationFlowContext, errorMessage);
             }
         } else {
+            logger.error("Authenticator is not configured!");
             showDenial(authenticationFlowContext, "Authentication flow is not configured!");
         }
     }
 
     public void showDenial(AuthenticationFlowContext context, String message) {
+        if (AuthenticatorUtils.debuggingBuild)
+            logger.info("Serving denial for reason: " + message);
+
         LoginFormsProvider form = context.form();
         form.setError(message);
         Response response = form.createForm(DenyLoginAuthenticatorFactory.DENIAL_FILE);

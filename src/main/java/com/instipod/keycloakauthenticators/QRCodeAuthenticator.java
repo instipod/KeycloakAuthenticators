@@ -1,5 +1,6 @@
 package com.instipod.keycloakauthenticators;
 
+import com.instipod.keycloakauthenticators.utils.AuthenticatorUtils;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
@@ -20,7 +21,8 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
     @Override
     public void authenticate(AuthenticationFlowContext authenticationFlowContext) {
         AuthenticatorConfigModel authConfig = authenticationFlowContext.getAuthenticatorConfig();
-        logger.debug("Starting a new QR Code authenticator session");
+        if (AuthenticatorUtils.debuggingBuild)
+            logger.info("Serving a new QR Code authenticator session");
 
         if (authConfig!=null && authConfig.getConfig()!=null) {
             //make sure the authenticator is configured
@@ -51,6 +53,9 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
         MultivaluedMap<String, String> formData = authenticationFlowContext.getHttpRequest().getDecodedFormParameters();
 
         if (formData.containsKey("cancel")) {
+            if (AuthenticatorUtils.debuggingBuild)
+                logger.info("Received request to cancel");
+
             authenticationFlowContext.failure(AuthenticationFlowError.INVALID_CREDENTIALS);
             return;
         }
@@ -73,7 +78,8 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
             return;
         }
 
-        logger.debug("QR Code value submitted, looking in " + attributeName + " for value " + qrCodeData);
+        if (AuthenticatorUtils.debuggingBuild)
+            logger.info("QR Code value submitted, looking in " + attributeName + " for value " + qrCodeData);
 
         boolean isValid = false;
         List<UserModel> users = authenticationFlowContext.getSession().users().searchForUserByUserAttribute(attributeName, qrCodeData, authenticationFlowContext.getRealm());
@@ -81,7 +87,8 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
         if (users.size() == 1 && qrCodeData.length() > 0) {
             //qr is valid, returned exactly one result
             UserModel user = users.get(0);
-            logger.info("User " + user.getUsername() + " authenticated successfully using QR Code.");
+            if (AuthenticatorUtils.debuggingBuild)
+                logger.info("User " + user.getUsername() + " authenticated successfully using QR Code.");
 
             authenticationFlowContext.clearUser();
             authenticationFlowContext.setUser(user);
@@ -89,11 +96,11 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
             authenticationFlowContext.success();
         } else {
             //qr is invalid, either returned zero or multiple users
-
-            logger.warn("Invalid QR Code data was provided.  Data was " + qrCodeData);
+            if (AuthenticatorUtils.debuggingBuild)
+                logger.warn("Invalid QR Code data was provided.  Data was " + qrCodeData);
 
             LoginFormsProvider form = generateForm(authenticationFlowContext);
-            form.setError("The QR code that was scanned is not valid.");
+            form.setError("That QR code is not valid.");
             Response challenge = form.createForm(QRCodeAuthenticatorFactory.QR_SCANNER_FILE);
             authenticationFlowContext.failureChallenge(AuthenticationFlowError.INVALID_CREDENTIALS, challenge);
         }

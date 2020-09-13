@@ -1,6 +1,7 @@
 package com.instipod.keycloakauthenticators;
 
 import com.instipod.keycloakauthenticators.utils.AuthenticatorUtils;
+import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.models.AuthenticatorConfigModel;
@@ -10,6 +11,7 @@ import org.keycloak.models.UserModel;
 
 public class SetNoteAuthenticator implements org.keycloak.authentication.Authenticator {
     public static final SetNoteAuthenticator SINGLETON = new SetNoteAuthenticator();
+    private static Logger logger = Logger.getLogger(SetNoteAuthenticator.class);
 
     @Override
     public void authenticate(AuthenticationFlowContext authenticationFlowContext) {
@@ -22,9 +24,13 @@ public class SetNoteAuthenticator implements org.keycloak.authentication.Authent
 
             noteValue = AuthenticatorUtils.variableReplace(authenticationFlowContext, noteValue);
 
+            if (AuthenticatorUtils.debuggingBuild)
+                logger.info("SetNote for note " + noteName + " with value " + noteValue);
+
             authenticationFlowContext.getAuthenticationSession().setAuthNote(noteName, noteValue);
             authenticationFlowContext.success();
         } else {
+            logger.error("Authenticator is not configured!");
             authenticationFlowContext.failure(AuthenticationFlowError.INTERNAL_ERROR);
         }
     }

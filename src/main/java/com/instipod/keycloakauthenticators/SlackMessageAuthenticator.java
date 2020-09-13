@@ -14,7 +14,7 @@ import java.io.IOException;
 import org.jboss.logging.Logger;
 
 public class SlackMessageAuthenticator implements org.keycloak.authentication.Authenticator {
-    private static Logger _log = Logger.getLogger(SlackMessageAuthenticator.class);
+    private static Logger logger = Logger.getLogger(SlackMessageAuthenticator.class);
 
     @Override
     public void authenticate(AuthenticationFlowContext authenticationFlowContext) {
@@ -31,11 +31,13 @@ public class SlackMessageAuthenticator implements org.keycloak.authentication.Au
             SlackMessage slackMessage = new SlackMessage(message);
 
             try {
-                _log.info("Sent slack message: " + message);
+                if (AuthenticatorUtils.debuggingBuild)
+                    logger.info("Sent slack message: " + message);
+
                 sendMessage(webhook, slackMessage);
             } catch (IOException exception) {
                 //fail only if critical
-                _log.warn("Slack Message Send was unsuccessful!");
+                logger.warn("Slack Message Send failed!");
                 if (isCritical.equalsIgnoreCase("true")) {
                     authenticationFlowContext.failure(AuthenticationFlowError.INTERNAL_ERROR);
                 }
@@ -43,7 +45,7 @@ public class SlackMessageAuthenticator implements org.keycloak.authentication.Au
 
             authenticationFlowContext.success();
         } else {
-            _log.error("Slack Message Executor is not configured!");
+            logger.error("Authenticator is not configured!");
             authenticationFlowContext.failure(AuthenticationFlowError.INTERNAL_ERROR);
         }
     }
