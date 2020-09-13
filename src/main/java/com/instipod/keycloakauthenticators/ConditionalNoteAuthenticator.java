@@ -20,10 +20,10 @@ public class ConditionalNoteAuthenticator implements org.keycloak.authentication
 
             String noteName = authConfig.getConfig().get(ConditionalNoteAuthenticatorFactory.CONDITIONAL_NOTE_NAME);
             String noteValue = authConfig.getConfig().get(ConditionalNoteAuthenticatorFactory.CONDITIONAL_NOTE_VALUE);
-            String not = authConfig.getConfig().get(ConditionalNoteAuthenticatorFactory.CONDITIONAL_NOTE_NOT);
+            boolean not = AuthenticatorUtils.getConfigBoolean(context, ConditionalNoteAuthenticatorFactory.CONDITIONAL_NOTE_NOT);
 
             boolean check;
-            if (not.equalsIgnoreCase("true")) {
+            if (not) {
                 //note should not have value
                 check = !(context.getAuthenticationSession().getAuthNote(noteName).equals(noteValue));
             } else {

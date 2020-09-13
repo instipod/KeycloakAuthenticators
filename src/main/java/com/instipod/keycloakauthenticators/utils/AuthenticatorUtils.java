@@ -1,7 +1,9 @@
 package com.instipod.keycloakauthenticators.utils;
 
+import com.instipod.keycloakauthenticators.ConditionalNoteAuthenticatorFactory;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
+import org.keycloak.models.AuthenticatorConfigModel;
 import org.keycloak.models.RoleModel;
 import org.keycloak.models.UserModel;
 
@@ -56,5 +58,24 @@ public class AuthenticatorUtils {
         }
 
         return false;
+    }
+
+    public static boolean getConfigBoolean(AuthenticationFlowContext context, String configName) {
+        AuthenticatorConfigModel authConfig = context.getAuthenticatorConfig();
+        if (authConfig!=null && authConfig.getConfig()!=null) {
+            String booleanValue = authConfig.getConfig().get(configName);
+
+            if (booleanValue == null) {
+                return false;
+            }
+            if (booleanValue.equalsIgnoreCase("true")) {
+                return true;
+            }
+
+            //otherwise
+            return false;
+        } else {
+            return false;
+        }
     }
 }

@@ -18,7 +18,7 @@ public class ConditionalRoleEnhancedAuthenticator implements org.keycloak.authen
 
         if (authConfig!=null && authConfig.getConfig()!=null) {
             //evaluate
-            String not = authConfig.getConfig().get(ConditionalRoleEnhancedAuthenticatorFactory.CONDITIONAL_NOT);
+            boolean not = AuthenticatorUtils.getConfigBoolean(context, ConditionalRoleEnhancedAuthenticatorFactory.CONDITIONAL_NOT);
             String role = authConfig.getConfig().get(ConditionalRoleEnhancedAuthenticatorFactory.CONDITIONAL_ROLE);
             role = AuthenticatorUtils.variableReplace(context, role);
 
@@ -26,7 +26,7 @@ public class ConditionalRoleEnhancedAuthenticator implements org.keycloak.authen
                 logger.info("ConditionalRoleEhncd: Checking " + context.getUser().getUsername() + " for role " + role);
 
             boolean check;
-            if (not.equalsIgnoreCase("true")) {
+            if (not) {
                 //does not have role
                 check = !(AuthenticatorUtils.hasRole(context.getUser(), role));
             } else {
