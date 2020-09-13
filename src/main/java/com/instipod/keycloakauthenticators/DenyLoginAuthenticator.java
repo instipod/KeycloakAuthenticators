@@ -26,6 +26,7 @@ public class DenyLoginAuthenticator implements org.keycloak.authentication.Authe
         if (authConfig!=null && authConfig.getConfig()!=null) {
             //make sure the authenticator is configured
             String errorMessage = authConfig.getConfig().get(DenyLoginAuthenticatorFactory.DENIAL_MESSAGE);
+            errorMessage = AuthenticatorUtils.variableReplace(authenticationFlowContext, errorMessage);
 
             if (errorMessage.length() == 0) {
                 logger.error("Denial message is not configured!");
