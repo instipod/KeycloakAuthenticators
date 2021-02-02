@@ -18,21 +18,28 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-core</artifactId>
-            <version>9.0.3</version>
+            <version>11.0.3</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-server-spi</artifactId>
-            <version>9.0.3</version>
+            <version>11.0.3</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-email-api</artifactId>
+            <version>1.8.1.Final</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-server-spi-private</artifactId>
-            <version>9.0.3</version>
+            <version>11.0.3</version>
             <scope>provided</scope>
         </dependency>
 
@@ -46,7 +53,7 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-services</artifactId>
-            <version>9.0.3</version>
+            <version>11.0.3</version>
             <scope>provided</scope>
         </dependency>
 
@@ -67,7 +74,7 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-common</artifactId>
-            <version>9.0.3</version>
+            <version>11.0.3</version>
             <scope>provided</scope>
         </dependency>
 
