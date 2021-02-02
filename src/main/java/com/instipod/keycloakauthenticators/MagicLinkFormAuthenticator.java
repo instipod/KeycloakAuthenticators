@@ -23,15 +23,18 @@ import org.keycloak.authentication.Authenticator;
 import org.keycloak.authentication.authenticators.browser.AbstractUsernameFormAuthenticator;
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.email.EmailException;
-import org.keycloak.email.EmailSenderProvider;
+import org.keycloak.email.freemarker.FreeMarkerEmailTemplateProvider;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.utils.KeycloakModelUtils;
+import org.keycloak.theme.FreeMarkerUtil;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
@@ -44,6 +47,11 @@ public class MagicLinkFormAuthenticator extends AbstractUsernameFormAuthenticato
         String email = formData.getFirst("email");
 
         sendMagicLink(context, email);
+    }
+
+    @Override
+    public boolean requiresUser() {
+        return false;
     }
 
     public void sendMagicLink(AuthenticationFlowContext context, String email) {
@@ -62,11 +70,18 @@ public class MagicLinkFormAuthenticator extends AbstractUsernameFormAuthenticato
         context.getAuthenticationSession().setAuthNote("email-key", key);
 
         String link = KeycloakUriBuilder.fromUri(context.getRefreshExecutionUrl()).queryParam("key", key).build().toString();
-        String body = "<a href=\"" + link + "\">Click to login</a>";
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.put("link", link);
+
         try {
-            context.getSession().getProvider(EmailSenderProvider.class).send(context.getRealm().getSmtpConfig(), user, "Login link", null, body);
+            FreeMarkerEmailTemplateProvider emailTemplateProvider = new FreeMarkerEmailTemplateProvider(context.getSession(), new FreeMarkerUtil());
+            emailTemplateProvider.setRealm(context.getRealm());
+            emailTemplateProvider.setUser(context.getUser());
+            emailTemplateProvider.setAuthenticationSession(context.getAuthenticationSession());
+            emailTemplateProvider.send("magicLinkSubject", "magic-link.ftl", attributes);
         } catch (EmailException e) {
             e.printStackTrace();
+            context.failure(AuthenticationFlowError.INTERNAL_ERROR);
         }
 
         context.setUser(user);
@@ -100,11 +115,6 @@ public class MagicLinkFormAuthenticator extends AbstractUsernameFormAuthenticato
             }
             sendMagicLink(context, attemptedUser);
         }
-    }
-
-    @Override
-    public boolean requiresUser() {
-        return false;
     }
 
     @Override
