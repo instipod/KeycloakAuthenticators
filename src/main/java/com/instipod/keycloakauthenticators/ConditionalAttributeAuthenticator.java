@@ -23,12 +23,14 @@ public class ConditionalAttributeAuthenticator implements org.keycloak.authentic
             boolean not = AuthenticatorUtils.getConfigBoolean(context, ConditionalAttributeAuthenticatorFactory.CONDITIONAL_NOT);
             String attributeName = authConfig.getConfig().get(ConditionalAttributeAuthenticatorFactory.CONDITIONAL_ATTRIBUTE_NAME);
             String attributeValue = authConfig.getConfig().get(ConditionalAttributeAuthenticatorFactory.CONDITIONAL_ATTRIBUTE_VALUE);
-            attributeName = AuthenticatorUtils.variableReplace(context, attributeName);
-            attributeValue = AuthenticatorUtils.variableReplace(context, attributeValue);
+            if (attributeName != null)
+                attributeName = AuthenticatorUtils.variableReplace(context, attributeName);
+            if (attributeValue != null)
+                attributeValue = AuthenticatorUtils.variableReplace(context, attributeValue);
 
             List<String> values = context.getUser().getAttribute(attributeName);
             boolean hasAttribute;
-            if (attributeValue.isBlank()) {
+            if (attributeValue == null || attributeValue == "") {
                 //check presence only
                 hasAttribute = (values.size() > 0);
             } else {
