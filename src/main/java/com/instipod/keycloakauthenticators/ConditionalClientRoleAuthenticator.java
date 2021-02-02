@@ -15,20 +15,29 @@ public class ConditionalClientRoleAuthenticator implements org.keycloak.authenti
 
         if (authConfig!=null && authConfig.getConfig()!=null) {
             //evaluate
-            boolean not = AuthenticatorUtils.getConfigBoolean(context, ConditionalRoleEnhancedAuthenticatorFactory.CONDITIONAL_NOT);
-            String role = authConfig.getConfig().get(ConditionalRoleEnhancedAuthenticatorFactory.CONDITIONAL_ROLE);
+            boolean not = AuthenticatorUtils.getConfigBoolean(context, ConditionalClientRoleAuthenticatorFactory.CONDITIONAL_NOT);
+            String role = authConfig.getConfig().get(ConditionalClientRoleAuthenticatorFactory.CONDITIONAL_ROLE);
             role = AuthenticatorUtils.variableReplace(context, role);
 
             ClientModel client = context.getAuthenticationSession().getClient();
             if (client == null) {
                 //if no client, no match
-                return false;
+                if (AuthenticatorUtils.debuggingBuild)
+                    logger.info("ConditionalClientRoleEhncd: There is no client, so passing the user");
+                return AuthenticatorUtils.getConfigBoolean(context, ConditionalClientRoleAuthenticatorFactory.CONDITIONAL_PASS);
             }
 
             if (AuthenticatorUtils.debuggingBuild)
                 logger.info("ConditionalClientRoleEhncd: Checking " + context.getUser().getUsername() + " for role " + role + " on client " + client.getClientId());
 
             RoleModel clientRole = client.getRole(role);
+            if (clientRole == null) {
+                //No such client role, pass the user
+                if (AuthenticatorUtils.debuggingBuild)
+                    logger.info("ConditionalClientRoleEhncd: The role specified did not exist on the client, passing the user...");
+                return AuthenticatorUtils.getConfigBoolean(context, ConditionalClientRoleAuthenticatorFactory.CONDITIONAL_PASS);
+            }
+
             boolean hasRole = context.getUser().hasRole(clientRole);
 
             boolean check;
