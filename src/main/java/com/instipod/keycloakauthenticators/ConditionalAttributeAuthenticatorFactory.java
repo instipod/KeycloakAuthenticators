@@ -21,7 +21,7 @@ public class ConditionalAttributeAuthenticatorFactory implements org.keycloak.au
     static {
         commonConfig = Collections.unmodifiableList(ProviderConfigurationBuilder.create()
                 .property().name(CONDITIONAL_ATTRIBUTE_NAME).label("User Attribute Name").helpText("Attribute name to check (supports variables)").type(ProviderConfigProperty.STRING_TYPE).add()
-                .property().name(CONDITIONAL_ATTRIBUTE_VALUE).label("User Attribute Value").helpText("Attribute value (supports variables)").type(ProviderConfigProperty.STRING_TYPE).add()
+                .property().name(CONDITIONAL_ATTRIBUTE_VALUE).label("User Attribute Value").helpText("Attribute value (supports variables) (leave blank to only check if present)").type(ProviderConfigProperty.STRING_TYPE).add()
                 .property().name(CONDITIONAL_NOT).label("Not").helpText("If we should match on NOT having this attribute").type(ProviderConfigProperty.BOOLEAN_TYPE).add()
                 .build()
         );

@@ -27,7 +27,13 @@ public class ConditionalAttributeAuthenticator implements org.keycloak.authentic
             attributeValue = AuthenticatorUtils.variableReplace(context, attributeValue);
 
             List<String> values = context.getUser().getAttribute(attributeName);
-            boolean hasAttribute = values.contains(attributeValue);
+            boolean hasAttribute;
+            if (attributeValue.isBlank()) {
+                //check presence only
+                hasAttribute = (values.size() > 0);
+            } else {
+                hasAttribute = values.contains(attributeValue);
+            }
 
             boolean check;
             if (not) {
