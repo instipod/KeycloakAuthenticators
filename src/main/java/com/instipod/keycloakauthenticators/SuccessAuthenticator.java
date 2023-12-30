@@ -1,16 +1,10 @@
 package com.instipod.keycloakauthenticators;
 
-import com.instipod.keycloakauthenticators.utils.AuthenticatorUtils;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
-import org.keycloak.authentication.AuthenticationFlowError;
-import org.keycloak.forms.login.LoginFormsProvider;
-import org.keycloak.models.AuthenticatorConfigModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
-
-import javax.ws.rs.core.Response;
 
 public class SuccessAuthenticator implements org.keycloak.authentication.Authenticator {
     public static final SuccessAuthenticator SINGLETON = new SuccessAuthenticator();

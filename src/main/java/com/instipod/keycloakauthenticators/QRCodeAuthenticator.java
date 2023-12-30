@@ -1,6 +1,8 @@
 package com.instipod.keycloakauthenticators;
 
 import com.instipod.keycloakauthenticators.utils.AuthenticatorUtils;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
@@ -9,10 +11,9 @@ import org.keycloak.models.AuthenticatorConfigModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
-
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class QRCodeAuthenticator implements org.keycloak.authentication.Authenticator {
     public static final QRCodeAuthenticator SINGLETON = new QRCodeAuthenticator();
@@ -82,7 +83,8 @@ public class QRCodeAuthenticator implements org.keycloak.authentication.Authenti
             logger.info("QR Code value submitted, looking in " + attributeName + " for value " + qrCodeData);
 
         boolean isValid = false;
-        List<UserModel> users = authenticationFlowContext.getSession().users().searchForUserByUserAttribute(attributeName, qrCodeData, authenticationFlowContext.getRealm());
+        Stream<UserModel> usersStream = authenticationFlowContext.getSession().users().searchForUserByUserAttributeStream(authenticationFlowContext.getRealm(), attributeName, qrCodeData);
+        List<UserModel> users = usersStream.collect(Collectors.toUnmodifiableList());
 
         if (users.size() == 1 && qrCodeData.length() > 0) {
             //qr is valid, returned exactly one result

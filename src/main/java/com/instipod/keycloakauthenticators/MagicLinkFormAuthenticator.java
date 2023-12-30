@@ -17,6 +17,8 @@
 
 package com.instipod.keycloakauthenticators;
 
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.Authenticator;
@@ -28,10 +30,6 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.utils.KeycloakModelUtils;
-import org.keycloak.theme.FreeMarkerUtil;
-
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +53,7 @@ public class MagicLinkFormAuthenticator extends AbstractUsernameFormAuthenticato
     }
 
     public void sendMagicLink(AuthenticationFlowContext context, String email) {
-        UserModel user = context.getSession().users().getUserByEmail(email, context.getRealm());
+        UserModel user = context.getSession().users().getUserByEmail(context.getRealm(), email);
         if (user == null) {
             // Register user
             user = context.getSession().users().addUser(context.getRealm(), email);
@@ -74,7 +72,7 @@ public class MagicLinkFormAuthenticator extends AbstractUsernameFormAuthenticato
         attributes.put("link", link);
 
         try {
-            FreeMarkerEmailTemplateProvider emailTemplateProvider = new FreeMarkerEmailTemplateProvider(context.getSession(), new FreeMarkerUtil());
+            FreeMarkerEmailTemplateProvider emailTemplateProvider = new FreeMarkerEmailTemplateProvider(context.getSession());
             emailTemplateProvider.setRealm(context.getRealm());
             emailTemplateProvider.setUser(context.getUser());
             emailTemplateProvider.setAuthenticationSession(context.getAuthenticationSession());

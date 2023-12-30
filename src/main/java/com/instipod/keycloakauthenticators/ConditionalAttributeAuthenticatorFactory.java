@@ -1,7 +1,7 @@
 package com.instipod.keycloakauthenticators;
 
 import org.keycloak.Config.Scope;
-import org.keycloak.authentication.authenticators.conditional.ConditionalAuthenticator;
+import org.keycloak.authentication.authenticators.conditional.ConditionalAuthenticatorFactory;
 import org.keycloak.models.AuthenticationExecutionModel.Requirement;
 import org.keycloak.models.KeycloakSessionFactory;
 import org.keycloak.provider.ProviderConfigProperty;
@@ -10,7 +10,7 @@ import org.keycloak.provider.ProviderConfigurationBuilder;
 import java.util.Collections;
 import java.util.List;
 
-public class ConditionalAttributeAuthenticatorFactory implements org.keycloak.authentication.authenticators.conditional.ConditionalAuthenticatorFactory {
+public class ConditionalAttributeAuthenticatorFactory implements ConditionalAuthenticatorFactory {
     public static final String PROVIDER_ID = "conditional-attribute";
     protected static final String CONDITIONAL_ATTRIBUTE_NAME = "condAttributeName";
     protected static final String CONDITIONAL_ATTRIBUTE_VALUE = "condAttributeValue";
@@ -87,7 +87,7 @@ public class ConditionalAttributeAuthenticatorFactory implements org.keycloak.au
     }
 
     @Override
-    public ConditionalAuthenticator getSingleton() {
+    public ConditionalAttributeAuthenticator getSingleton() {
         return ConditionalAttributeAuthenticator.SINGLETON;
     }
 }
